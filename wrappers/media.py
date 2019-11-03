@@ -1,48 +1,44 @@
-from graphene import ID, String, Int, Boolean, Field, List, ObjectType
+# from title import MediaTitle
+# from airingSchedule import AiringSchedule
+# from status import MediaStatus
+# 
+# from episode import MediaStreamingEpisode
+# 
+# from date import FuzzyDate
 
-from title import MediaTitle
-from airingSchedule import AiringSchedule
-from status import MediaStatus
-
-from episode import MediaStreamingEpisode
-
-from date import FuzzyDate
-
-class Media(ObjectType):
-    id = ID()
-    title = Field(MediaTitle)
-    startDate = Field(FuzzyDate)
-    endDate = Field(FuzzyDate)
-
-    type = String()
-    format = String()
-    status = String()
-    description = String()
-    season = String()
-    seasonInt = Int()
-    episodes = Int()
-    duration = Int()
-    countryOfOrigin = String()
-    isLicensed = Boolean()
-    source = String()
-    hashtag = String()
-    updatedAt = String()
-    genres = List(String())
-    synonyms = List(String())
-    averageScore = Int()
-    meanScore = Int()
-    popularity = Int()
-    isLocked = Boolean()
-    trending = Int()
-    favourites = Int()
-    isFavourite = Boolean()
-    isAdult = Boolean()
-    streamingEpisodes = List(MediaStreamingEpisode())
-    siteUrl = String()
-    autoCreateForumThread = Boolean()
-    isRecommendationBlocked = Boolean()
-
-    episodes = Field(AiringSchedule)
-    status = Field(MediaStatus)
-
-    # TODO: modNotes, reviews, rankings, mediaListEntry, externalLink, trends, nextAiringEpisode, chapters, volumes, trailer, coverimage, bannerimage, tags, relations, characters, staff, studios, 
+class Media():
+    def __init__(self, id, title, startDate, endDate, type, format, status, description, season, seasonInt, episodes, duration, countryOfOrigin, isLicensed,
+    source, hashtag, updatedAt, genres, synonyms, averageScore, meanScore, popularity, isLocked, trending, favourites, isFavourite, isAdult, streamingEpisodes,
+    siteUrl, autoCreateForumThread, isRecommendationBlocked, airingSchedule):
+        self.id = id
+        self.title = title
+        self.startDate = startDate
+        self.endDate = endDate
+        self.type = type
+        self.format = format
+        self.status = status
+        self.description = description
+        self.season = season
+        self.seasonInt = seasonInt
+        self.episodes = episodes
+        self.duration = duration
+        self.countryOfOrigin = countryOfOrigin
+        self.isLicensed = isLicensed
+        self.source = source
+        self.hashtag = hashtag
+        self.updatedAt = updatedAt
+        self.genres = genres
+        self.synonyms = synonyms
+        self.averageScore = averageScore
+        self.meanScore = meanScore
+        self.popularity = popularity
+        self.isLocked = isLocked
+        self.trending = trending
+        self.favourites = favourites
+        self.isFavourite = isFavourite
+        self.isAdult = isAdult
+        self.streamingEpisodes = streamingEpisodes
+        self.siteUrl = siteUrl
+        self.autoCreateForumThread = autoCreateForumThread
+        self.isRecommendationBlocked = isRecommendationBlocked
+        self.airingSchedule = airingSchedule

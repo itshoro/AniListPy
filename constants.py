@@ -1,1 +1,1 @@
-baseUrl = "https://graphql.anilist.co"
+url = "https://graphql.anilist.co"

@@ -9,4 +9,4 @@ class AiringSchedule(ObjectType):
     timeUntilAiring = Int()
     episode = Int()
     mediaId = Int()
-    media = Field(Media())
+    media = Int()

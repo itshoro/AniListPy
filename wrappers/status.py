@@ -1,5 +1,4 @@
-from aenum import Enum
-from graphene import ObjectType
+from graphene import ObjectType, Enum
 
 class MediaStatus(ObjectType, Enum):
     Finished = "FINISHED"

@@ -1,0 +1,9 @@
+{
+    "configurations": [{
+        "name": "Python: Run Project",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceRoot}\\anilist.py",
+        "console": "integratedTerminal"
+    }]
+}
