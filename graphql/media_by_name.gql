@@ -1,4 +1,4 @@
-query($name:String, $type: MediaType){
+query($name: String, $type: MediaType){
     Media(search: $name, type: $type) {
         id
         endDate {

@@ -30,7 +30,7 @@ class Client:
         yield [asMedia(media) for media in response.json()["data"]["Page"]]
 
     def getMediaByName(self, name: str, type = "ANIME") -> Media:
-        response = self.client.request(self.queries["mediaByName"], { "search": name, "type": type })         
+        response = self.client.request(self.queries["mediaByName"], { "name": name, "type": type })         
         return asMedia(response.json()["data"])
 
 
@@ -93,3 +93,6 @@ def asTitle(dct):
 c = Client()
 anime = c.getMediaById(105310)
 print(anime.title)
+
+spice = c.getMediaByName("Spice And Wolf")
+print(spice.title)
