@@ -1,9 +1,18 @@
 {
-    "configurations": [{
-        "name": "Python: Run Project",
-        "type": "python",
-        "request": "launch",
-        "program": "${workspaceRoot}\\anilist.py",
-        "console": "integratedTerminal"
-    }]
+    "configurations": 
+    [
+        {
+            "name": "Python: Run Project",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}\\anilistpy\\__init__.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Test Project",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}\\test.py"
+        }
+    ]
 }

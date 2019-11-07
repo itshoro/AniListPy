@@ -1,0 +1,5 @@
+from anilistpy.test.test_queries import test_query_single_anime_by_id, test_query_single_anime_by_name, test_query_multiple_anime_by_ids
+
+test_query_single_anime_by_id()
+test_query_single_anime_by_name()
+test_query_multiple_anime_by_ids()

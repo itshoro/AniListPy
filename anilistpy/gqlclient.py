@@ -9,8 +9,8 @@ class GqlClient:
         }
 
     def request(self, query, variables = None):
-        body = { "query": query, "variables": variables }
-        response = requests.post(self.url, headers=self.headers, json=body)
+        payload = { "query": query, "variables": variables }
+        response = requests.post(self.url, headers=self.headers, json=payload)
 
         if response.status_code >= 400:
             raise TypeError(f"Request produced a {response.status_code} - {response.reason}\n" + response.text)

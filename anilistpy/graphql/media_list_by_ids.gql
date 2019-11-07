@@ -1,6 +1,6 @@
-query($ids:[Int], $count:Int, $type: MediaType){
-    Page (page: 1, perPage: $count) {
-        Media(in_id: $ids, type: $type) {
+query($ids:[Int], $type: MediaType){
+    Page (page: 1) {
+        media(id_in: $ids, type: $type) {
             id
             endDate {
                 year
