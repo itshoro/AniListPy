@@ -8,13 +8,9 @@ class GqlClient:
             "Accept": "application/json"
         }
 
-    def request(self, query, variables = None, method = "POST"):
+    def request(self, query, variables = None):
         body = { "query": query, "variables": variables }
-
-        if method == "POST":
-            response = requests.post(self.url, headers=self.headers, json=body)
-        else:
-            raise TypeError(f"The following HTTP method is not supported: {method}")
+        response = requests.post(self.url, headers=self.headers, json=body)
 
         if response.status_code >= 400:
             raise TypeError(f"Request produced a {response.status_code} - {response.reason}\n" + response.text)

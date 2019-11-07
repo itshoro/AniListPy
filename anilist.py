@@ -6,18 +6,33 @@ import json, os, os.path
 
 from collections import namedtuple
 from wrappers.media import Media
+from wrappers.title import MediaTitle
+
+from functools import singledispatch
+from typing import List
 
 class Client:
 
     def __init__(self):
         self.client = GqlClient(constants.url)
         self.queries = {
-            "animeById": read("graphql\\anime_by_id.gql")
+            "mediaById": read("graphql\\media_by_id.gql"),
+            "mediasById": read("graphql\\medias_by_id.gql"),
+            "mediaByName": read("graphql\\media_by_name.gql")
         }
 
-    def getAnime(self, id: int):
-        response = self.client.request(self.queries["animeById"], { "id": id, "type": "ANIME" })         
-        return asAnime(response.json())
+    def getMediaById(self, id: int, type = "ANIME") -> Media:
+        response = self.client.request(self.queries["mediaById"], { "id": id, "type": type })         
+        return asMedia(response.json()["data"])
+
+    def getMediasById(self, ids: List[int], type = "ANIME") -> List[Media]:
+        response = self.client.request(self.queries["mediasById"], { "ids": ids, "count": len(ids), "type": type })         
+        yield [asMedia(media) for media in response.json()["data"]["Page"]]
+
+    def getMediaByName(self, name: str, type = "ANIME") -> Media:
+        response = self.client.request(self.queries["mediaByName"], { "search": name, "type": type })         
+        return asMedia(response.json()["data"])
+
 
 def read(relFilePath):
     absPath = os.path.abspath(os.path.dirname(__file__))
@@ -27,8 +42,8 @@ def read(relFilePath):
         contents = file.read()
     return contents
 
-def asAnime(dct):
-    data = dct["data"]["Media"]
+def asMedia(dct):
+    data = dct["Media"]
     return Media(
         data["id"],
         asTitle(data["title"]),
@@ -73,13 +88,8 @@ def asDate(dct):
     return datetime.date(dct["year"], dct["month"], dct["day"])
 
 def asTitle(dct):
-    return {
-        "romaji": dct["romaji"],
-        "english": dct["english"],
-        "native": dct["native"],
-        "userPreferred": dct["userPreferred"]
-    }
+    return MediaTitle(dct["romaji"], dct["english"], dct["native"], dct["userPreferred"])
 
 c = Client()
-anime = c.getAnime(105310)
-print(anime.title["romaji"])
+anime = c.getMediaById(105310)
+print(anime.title)
