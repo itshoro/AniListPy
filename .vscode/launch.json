@@ -1,18 +1,18 @@
 {
-    "configurations": 
-    [
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
         {
             "name": "Python: Run Project",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}\\anilistpy\\__init__.py",
+            "program": "${workspaceRoot}\\main.py",
             "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: Test Project",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceRoot}\\test.py"
         }
     ]
 }

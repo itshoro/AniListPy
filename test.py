@@ -1,5 +1,14 @@
-from anilistpy.test.test_queries import test_query_single_anime_by_id, test_query_single_anime_by_name, test_query_multiple_anime_by_ids
 
+# Query Animes
+from anilistpy.test.test_queries import test_query_single_anime_by_id, test_query_single_anime_by_name, test_query_multiple_anime_by_ids
 test_query_single_anime_by_id()
 test_query_single_anime_by_name()
 test_query_multiple_anime_by_ids()
+
+# Query Manga
+from anilistpy.test.test_queries import test_query_single_manga_by_id, test_query_single_manga_by_name, test_query_multiple_manga_by_ids
+test_query_single_manga_by_id()
+test_query_single_manga_by_name()
+test_query_multiple_manga_by_ids()
+
+
