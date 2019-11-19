@@ -1,6 +1,7 @@
 class Query():
     def __init__(self, allowedArgs: list):
         self.allowedArgs = allowedArgs
+        self.args = list()
         self.mediaBody = '''
         id
         endDate {
@@ -144,21 +145,44 @@ class Query():
         isRecommendationBlocked
         '''
 
-    def build(self, potentialArgs: list):
+    def build(self, potentialArgs = None):
+        if potentialArgs != None:
+            self.setArguments(potentialArgs)
+        return self.args
+
+    def getType(self, arg):
+        return self.args[arg]
+
+    def setArguments(self, potentialArgs: list):
         filterNames = [x[0] for x in self.allowedArgs]
         filterTypes = [x[1] for x in self.allowedArgs]
-        args = []
+        self.args = []
 
         for arg in potentialArgs:
             if (arg[0] in filterNames):
-                args.append((arg[0],filterTypes[filterNames.index(arg[0])]))
+                self.args.append((arg[0], filterTypes[filterNames.index(arg[0])], arg[1]))
                 continue
             else:
                 raise Exception("Filter not supported.")
-        return args
+
+    def getArgs(self):
+        return self.args
+
+class QueryBuilder:
+    def __init__(self):
+        pass
+
+    def build(self, query):
+        queryResult, queryVars = query.build()
+
+        result = "query(" + ",".join([f"${arg[0]}:{arg[1]}" for arg in query.getArgs()]) + "){"
+        result += queryResult
+        result += "}"
+
+        return result, queryVars
 
 class MediaQuery(Query):
-    def __init__(self):
+    def __init__(self, arguments):
         super().__init__([
             ("id","Int"),
             ("id_not","[Int]"),
@@ -192,24 +216,49 @@ class MediaQuery(Query):
             ("popularity_lesser", NotImplemented),
             ("source_in", NotImplemented),
         ])
+        super().setArguments(arguments)
 
     # Todo: Filter potentialArgs, so that only one instance of any argument is provided
-    def build(self, potentialArgs: list):
-        queryVars = super().build(potentialArgs)
-        queryArgs = ""
-        for arg in queryVars:
-            queryArgs += f"${arg[0]}:{arg[1]},"
-        mediaArgs = ""
-        for arg in queryVars:
-            mediaArgs += f"{arg[0]}:${arg[0]},"
-        if len(potentialArgs):
-            queryArgs = queryArgs[:-1]
-            mediaArgs = mediaArgs[:-1]
+    def build(self, mediaObject = "Media"):
 
-        query = "query(" + queryArgs + "){Media(" + mediaArgs + "){" + self.mediaBody +"}}"
+        query = mediaObject
+        if len(self.args):
+            query += "(" + ",".join([f"{arg[0]}:${arg[0]}" for arg in self.args]) + ")"
+        query += "{" + self.mediaBody +"}"
 
         variables =  {}
-        for var in potentialArgs:
-            variables[var[0]] = var[1]
+        for var in self.args:
+            variables[var[0]] = var[2]
 
         return query, variables
+
+class PageQuery(Query):
+    def __init__(self, arguments: list, innerQuery: Query):
+        super().__init__([
+            ("Page", "Int"),
+            ("perPage", "Int")
+        ])
+        if arguments != None:
+            self.setArguments(arguments)
+        self.innerQuery = innerQuery
+
+    # TODO
+    def build(self):
+        innerQuery, innerVars = self.innerQuery.build("media")
+        
+        query = "Page"
+        if len(self.args):
+            query += "(" + ",".join([f"{arg[0]}:${arg[0]}" for arg in self.args]) + ")"
+        query += "{" + innerQuery + "}"
+
+        variables =  {}
+        for var in self.args:
+            variables[var[0]] = var[2]
+
+        variables.update(innerVars)
+        return query, variables
+
+    def getArgs(self):
+        fullArgumentList = super().getArgs()
+        fullArgumentList.extend(self.innerQuery.getArgs())
+        return fullArgumentList

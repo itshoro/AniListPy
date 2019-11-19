@@ -24,25 +24,25 @@ class Client:
         }
 
     def getMediaById(self, id: int, type = anime) -> Media:
-        response = self.client.request(self.queries["mediaById"], { "id": id, "type": type })
-        return asMedia(response.json()["data"]["Media"])
+        return asMedia(self.request(self.queries["mediaById"], { "id": id, "type": type })["Media"])
 
     def getMediaListByIds(self, ids: list, type = anime) -> list:
         # "Queries are allowed to return a maximum of 50 items. If this is exceeded you just won't receive more entries.
-        response = self.client.request(self.queries["mediaListByIds"], { "ids": ids, "type": type })
-        return [asMedia(media) for media in response.json()["data"]["Page"]["media"]]
+        response = self.request(self.queries["mediaListByIds"], { "ids": ids, "type": type })
+        return [asMedia(media) for media in response["Page"]["media"]]
 
     def getMediaByName(self, name: str, type = anime) -> Media:
-        response = self.client.request(self.queries["mediaByName"], { "name": name, "type": type })
-        return asMedia(response.json()["data"]["Media"])
+        return asMedia(self.request(self.queries["mediaByName"], { "name": name, "type": type })["Media"])
 
     def getMedia(self, args: list) -> Media:
         mq = MediaQuery()
         query, variables = mq.build(args)
         # Todo: Consider a better method to pass the args to MediaQuery.build()
         # Todo: Create a QueryBuilder class, that chooses the right query class itself. (?)
-        response = self.client.request(query, variables)
-        return asMedia(response.json()["data"]["Media"])
+        return asMedia(self.request(query, variables)["Media"])
+
+    def request(self, query, variables):
+        return self.client.request(query, variables).json()["data"]
 
 def read(relFilePath):
     absPath = os.path.abspath(os.path.dirname(__file__))

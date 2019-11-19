@@ -1,7 +1,8 @@
 import pytest
 
-from anilistpy.anilist import Client
-from anilistpy.constants import manga
+from anilistpy.anilist import Client, asMedia
+from anilistpy.constants import manga, anime
+from anilistpy.query_builder import QueryBuilder, PageQuery, MediaQuery
 
 c = Client()
 def test_query_single_anime_by_id():
@@ -26,9 +27,25 @@ def test_query_multiple_manga_by_ids():
 
 ###############################
 
-def test_query_builder():
-    assert c.getMedia([
+def test_query_builder_can_build_simple_query():
+    qb = QueryBuilder()
+    mq = MediaQuery([
         ("id", 2966),
-        ("type", "ANIME"),
+        ("type", anime),
         ("startDate_greater", 1)
-    ]).title.english() == "Spice and Wolf"
+    ])
+    query, variables = qb.build(mq)
+    media = asMedia(c.request(query, variables)["Media"])
+    assert media.title.english() == "Spice and Wolf"
+
+def test_query_builder_can_build_nested_query():
+    qb = QueryBuilder()
+    mq = MediaQuery([
+        ("type", anime),
+        ("id_in", [2966, 5341])
+    ])
+    pq = PageQuery(None, mq)
+    query, variables = qb.build(pq)
+    req = c.request(query, variables)
+    mediaList = [asMedia(x) for x in req["Page"]["media"]]
+    assert len(mediaList) == 2 and mediaList[0].title.english() == "Spice and Wolf" and mediaList[1].title.english() == "Spice and Wolf II"
