@@ -168,6 +168,29 @@ class Query():
     def getArgs(self):
         return self.args
 
+class SimpleQuery(Query):
+    def __init__(self, type: str, body: str, allowedArgs: list, queryArgs = None):
+        super().__init__(allowedArgs)
+        if queryArgs != None:
+            super().setArguments(queryArgs)
+        self.body = body
+        self.type = type
+
+    def build(self, args = None):
+        if args != None:
+            super().setArguments(args)
+
+        result = type
+        if len(self.getArgs()):
+            result += "(%s)".format(",".join([f"${arg[0]}:${arg[0]}" for arg in self.getArgs()]))
+        result += "{%s}".format(self.body)
+
+        variables =  {}
+        for var in self.getArgs():
+            variables[var[0]] = var[2]
+
+        return result, variables
+
 class QueryBuilder:
     def __init__(self):
         pass
@@ -242,7 +265,6 @@ class PageQuery(Query):
             self.setArguments(arguments)
         self.innerQuery = innerQuery
 
-    # TODO
     def build(self):
         innerQuery, innerVars = self.innerQuery.build("media")
         
