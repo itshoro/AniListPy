@@ -1,149 +1,20 @@
+class QueryBuilder:
+    def __init__(self):
+        pass
+
+    def build(self, query):
+        queryResult, queryVars = query.build()
+
+        result = "query(" + ",".join([f"${arg[0]}:{arg[1]}" for arg in query.getArgs()]) + "){"
+        result += queryResult
+        result += "}"
+
+        return result, queryVars
+
 class Query():
     def __init__(self, allowedArgs: list):
         self.allowedArgs = allowedArgs
         self.args = list()
-        self.mediaBody = '''
-        id
-        endDate {
-            year
-            month
-            day
-        }
-        airingSchedule {
-            edges {
-                id
-                node {
-                    id
-                    airingAt
-                    timeUntilAiring
-                    episode
-                    mediaId
-                    media {
-                        id
-                    }
-                }
-            }
-        }
-        title {
-            romaji
-            english
-            native
-            userPreferred
-        }
-        type
-        format
-        status
-        description
-        startDate {
-            year
-            month
-            day
-        }
-        endDate {
-            year
-            month
-            day
-        }
-        season
-        seasonInt
-        episodes
-        duration
-        chapters
-        volumes
-        countryOfOrigin
-        isLicensed
-        source
-        hashtag
-        trailer {
-            id
-        }
-        updatedAt
-        coverImage {
-            extraLarge
-            large
-            medium
-            color
-        }
-        bannerImage
-        genres
-        synonyms
-        averageScore
-        meanScore
-        popularity
-        isLocked
-        trending
-        favourites
-        tags {
-            id
-        }
-        relations {
-            edges {
-                id
-            }
-        }
-        characters {
-            edges {
-                id
-            }
-        }
-        staff {
-            edges {
-                id
-            }
-        }
-        studios {
-            edges {
-                id
-            }
-        }
-        isFavourite
-        isAdult
-        nextAiringEpisode {
-            id
-        }
-        trends {
-            edges {
-                node {
-                    averageScore
-                    popularity
-                    inProgress
-                    episode
-                }
-            }
-        }
-        externalLinks {
-            id
-        }
-        streamingEpisodes {
-            title
-            thumbnail
-            url
-            site
-        }
-        rankings {
-            id
-        }
-        mediaListEntry {
-            id
-        }
-        reviews {
-            edges {
-                node {
-                    id
-                }
-            }
-        }
-        recommendations {
-            edges {
-                node {
-                    id
-                }
-            }
-        }
-        siteUrl
-        autoCreateForumThread
-        isRecommendationBlocked
-        '''
 
     def build(self, potentialArgs = None):
         if potentialArgs != None:
@@ -169,113 +40,268 @@ class Query():
         return self.args
 
 class SimpleQuery(Query):
-    def __init__(self, type: str, body: str, allowedArgs: list, queryArgs = None):
+    def __init__(self, objectType: str, body: str, allowedArgs: list, queryArgs = None):
         super().__init__(allowedArgs)
         if queryArgs != None:
             super().setArguments(queryArgs)
         self.body = body
-        self.type = type
+        self.objectType = objectType
 
     def build(self, args = None):
         if args != None:
             super().setArguments(args)
 
-        result = type
-        if len(self.getArgs()):
-            result += "(%s)".format(",".join([f"${arg[0]}:${arg[0]}" for arg in self.getArgs()]))
-        result += "{%s}".format(self.body)
+        result = self.objectType
+        if len(self.args):
+            result += "(" + ",".join([str(f"{arg[0]}:${arg[0]}") for arg in self.args]) + ")"
+        result += f"{{{self.body}}}"
 
         variables =  {}
-        for var in self.getArgs():
+        for var in self.args:
             variables[var[0]] = var[2]
 
         return result, variables
 
-class QueryBuilder:
-    def __init__(self):
-        pass
+class MediaQuery(SimpleQuery):
+    def __init__(self, arguments = None):
+        super().__init__(
+            objectType = "Media",
+            body = '''
+            id
+            endDate {
+                year
+                month
+                day
+            }
+            airingSchedule {
+                edges {
+                    id
+                    node {
+                        id
+                        airingAt
+                        timeUntilAiring
+                        episode
+                        mediaId
+                        media {
+                            id
+                        }
+                    }
+                }
+            }
+            title {
+                romaji
+                english
+                native
+                userPreferred
+            }
+            type
+            format
+            status
+            description
+            startDate {
+                year
+                month
+                day
+            }
+            endDate {
+                year
+                month
+                day
+            }
+            season
+            seasonInt
+            episodes
+            duration
+            chapters
+            volumes
+            countryOfOrigin
+            isLicensed
+            source
+            hashtag
+            trailer {
+                id
+            }
+            updatedAt
+            coverImage {
+                extraLarge
+                large
+                medium
+                color
+            }
+            bannerImage
+            genres
+            synonyms
+            averageScore
+            meanScore
+            popularity
+            isLocked
+            trending
+            favourites
+            tags {
+                id
+            }
+            relations {
+                edges {
+                    id
+                }
+            }
+            characters {
+                edges {
+                    id
+                }
+            }
+            staff {
+                edges {
+                    id
+                }
+            }
+            studios {
+                edges {
+                    id
+                }
+            }
+            isFavourite
+            isAdult
+            nextAiringEpisode {
+                id
+            }
+            trends {
+                edges {
+                    node {
+                        averageScore
+                        popularity
+                        inProgress
+                        episode
+                    }
+                }
+            }
+            externalLinks {
+                id
+            }
+            streamingEpisodes {
+                title
+                thumbnail
+                url
+                site
+            }
+            rankings {
+                id
+            }
+            mediaListEntry {
+                id
+            }
+            reviews {
+                edges {
+                    node {
+                        id
+                    }
+                }
+            }
+            recommendations {
+                edges {
+                    node {
+                        id
+                    }
+                }
+            }
+            siteUrl
+            autoCreateForumThread
+            isRecommendationBlocked
+            ''',
+            allowedArgs = [
+                ("id","Int"),
+                ("id_not","[Int]"),
+                ("id_in","[Int]"),
+                ("id_not_in","[Int]"),
+                ("startDate_greater", "FuzzyDateInt"),
+                ("startDate_lesser", "FuzzyDateInt"),
+                ("endDate_greater", "FuzzyDateInt"),
+                ("endDate_lesser", "FuzzyDateInt"),
+                ("episodes_greater", "Int"),
+                ("episodes_lesser", "Int"),
+                ("duration_greater", "Int"),
+                ("duration_lesser", "Int"),
+                ("chapters_greater", "Int"),
+                ("chapters_lesser", "Int"),
+                ("volumes_greater", "Int"),
+                ("volumes_lesser", "Int"),
+                ("type", "MediaType"),
+                ("genre_in", NotImplemented),
+                ("genre_not_in", NotImplemented),
+                ("tag_in", NotImplemented),
+                ("tag_not_in", NotImplemented),
+                ("tagCategory_in", NotImplemented),
+                ("tagCategory_not_in", NotImplemented),
+                ("licensedBy_in", NotImplemented),
+                ("averageScore_not", NotImplemented),
+                ("averageScore_greater", NotImplemented),
+                ("averageScore_lesser", NotImplemented),
+                ("popularity_not", NotImplemented),
+                ("popularity_greater", NotImplemented),
+                ("popularity_lesser", NotImplemented),
+                ("source_in", NotImplemented),
+            ],
+            queryArgs= arguments)
 
-    def build(self, query):
-        queryResult, queryVars = query.build()
+class CharacterQuery(SimpleQuery):
+    def __init__(self, arguments = None):
+        super().__init__(
+            objectType="Character",
+            body=
+            '''
+            id
+            name {
+                first
+                last
+                full
+                native
+            }
+            image {
+                large
+                medium
+            }
+            description
+            isFavourite
+            siteUrl
+            media {
+                edges {
+                    id
+                }
+            }
+            updatedAt
+            favourites
+            ''',
+            allowedArgs = [
+                ("id", "Int"),
+                ("search", "String"),
+                ("id_in", "[Int]"),
+                ("id_not_in", "[Int]"),
+                ("sort", NotImplemented)
+            ],
+            queryArgs=arguments
+        )
 
-        result = "query(" + ",".join([f"${arg[0]}:{arg[1]}" for arg in query.getArgs()]) + "){"
-        result += queryResult
-        result += "}"
-
-        return result, queryVars
-
-class MediaQuery(Query):
-    def __init__(self, arguments):
-        super().__init__([
-            ("id","Int"),
-            ("id_not","[Int]"),
-            ("id_in","[Int]"),
-            ("id_not_in","[Int]"),
-            ("startDate_greater", "FuzzyDateInt"),
-            ("startDate_lesser", "FuzzyDateInt"),
-            ("endDate_greater", "FuzzyDateInt"),
-            ("endDate_lesser", "FuzzyDateInt"),
-            ("episodes_greater", "Int"),
-            ("episodes_lesser", "Int"),
-            ("duration_greater", "Int"),
-            ("duration_lesser", "Int"),
-            ("chapters_greater", "Int"),
-            ("chapters_lesser", "Int"),
-            ("volumes_greater", "Int"),
-            ("volumes_lesser", "Int"),
-            ("type", "MediaType"),
-            ("genre_in", NotImplemented),
-            ("genre_not_in", NotImplemented),
-            ("tag_in", NotImplemented),
-            ("tag_not_in", NotImplemented),
-            ("tagCategory_in", NotImplemented),
-            ("tagCategory_not_in", NotImplemented),
-            ("licensedBy_in", NotImplemented),
-            ("averageScore_not", NotImplemented),
-            ("averageScore_greater", NotImplemented),
-            ("averageScore_lesser", NotImplemented),
-            ("popularity_not", NotImplemented),
-            ("popularity_greater", NotImplemented),
-            ("popularity_lesser", NotImplemented),
-            ("source_in", NotImplemented),
-        ])
-        super().setArguments(arguments)
-
-    # Todo: Filter potentialArgs, so that only one instance of any argument is provided
-    def build(self, mediaObject = "Media"):
-
-        query = mediaObject
-        if len(self.args):
-            query += "(" + ",".join([f"{arg[0]}:${arg[0]}" for arg in self.args]) + ")"
-        query += "{" + self.mediaBody +"}"
-
-        variables =  {}
-        for var in self.args:
-            variables[var[0]] = var[2]
-
-        return query, variables
-
-class PageQuery(Query):
+class PageQuery(SimpleQuery):
     def __init__(self, arguments: list, innerQuery: Query):
-        super().__init__([
-            ("Page", "Int"),
-            ("perPage", "Int")
-        ])
+        super().__init__(
+            objectType = "Page",
+            body = None,
+            allowedArgs = [
+                ("Page", "Int"),
+                ("perPage", "Int")
+            ], 
+            queryArgs = arguments
+        )
         if arguments != None:
             self.setArguments(arguments)
         self.innerQuery = innerQuery
+        self.innerQuery.objectType = self.getNestedName(self.innerQuery.objectType)
 
     def build(self):
-        innerQuery, innerVars = self.innerQuery.build("media")
-        
-        query = "Page"
-        if len(self.args):
-            query += "(" + ",".join([f"{arg[0]}:${arg[0]}" for arg in self.args]) + ")"
-        query += "{" + innerQuery + "}"
+        innerQuery, innerVars = self.innerQuery.build()
 
-        variables =  {}
-        for var in self.args:
-            variables[var[0]] = var[2]
+        self.body = innerQuery
+        query, variables = super().build()
 
         variables.update(innerVars)
         return query, variables
@@ -284,3 +310,9 @@ class PageQuery(Query):
         fullArgumentList = super().getArgs()
         fullArgumentList.extend(self.innerQuery.getArgs())
         return fullArgumentList
+
+    def getNestedName(self, name: str):
+        return {
+            "Media": "media",
+            "Character": "characters"
+        }[name]
