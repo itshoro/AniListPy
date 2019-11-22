@@ -14,9 +14,8 @@ from functools import singledispatch
 from typing import List
 
 class Client:
-
-    def __init__(self):
-        self.client = GqlClient(url)
+    def __init__(self, client = None):
+        self.client = client or GqlClient(url)
         self.queries = {
             "mediaById": read("graphql\\media_by_id.gql"),
             "mediaListByIds": read("graphql\\media_list_by_ids.gql"),
@@ -28,7 +27,7 @@ class Client:
 
     def getMediaListByIds(self, ids: list, type = anime) -> list:
         # "Queries are allowed to return a maximum of 50 items. If this is exceeded you just won't receive more entries.
-        response = self.request(self.queries["mediaListByIds"], { "ids": ids, "type": type })
+        response = self.request(self.queries["mediaListByIds"], { "id_in": ids, "type": type })
         return [asMedia(media) for media in response["Page"]["media"]]
 
     def getMediaByName(self, name: str, type = anime) -> Media:
@@ -37,12 +36,13 @@ class Client:
     def getMedia(self, args: list) -> Media:
         mq = MediaQuery()
         query, variables = mq.build(args)
-        # Todo: Consider a better method to pass the args to MediaQuery.build()
-        # Todo: Create a QueryBuilder class, that chooses the right query class itself. (?)
+        # TODO: Consider a better method to pass the args to MediaQuery.build()
+        # TODO: Create a QueryBuilder class, that chooses the right query class itself. (?)
         return asMedia(self.request(query, variables)["Media"])
 
     def request(self, query, variables):
-        return self.client.request(query, variables).json()["data"]
+        response = self.client.request(query, variables)
+        return response["data"]
 
 def read(relFilePath):
     absPath = os.path.abspath(os.path.dirname(__file__))
@@ -54,47 +54,47 @@ def read(relFilePath):
 
 def asMedia(data):
     return Media(
-        data["id"],
-        asTitle(data["title"]),
-        asDate(data["startDate"]),
-        asDate(data["endDate"]),
-        data["type"],
-        data["format"],
-        data["status"],
-        data["description"],
-        data["season"],
-        data["seasonInt"],
-        data["episodes"],
-        data["duration"],
-        data["countryOfOrigin"],
-        data["isLicensed"],
-        data["source"],
-        data["hashtag"],
-        data["updatedAt"],
-        data["genres"],
-        data["synonyms"],
-        data["averageScore"],
-        data["meanScore"],
-        data["popularity"],
-        data["isLocked"],
-        data["trending"],
-        data["favourites"],
-        data["isFavourite"],
-        data["isAdult"],
-        data["streamingEpisodes"],
-        data["siteUrl"],
-        data["autoCreateForumThread"],
-        data["isRecommendationBlocked"],
-        data["airingSchedule"])
+        data.get("id", None),
+        asTitle(data.get("title", dict())),
+        asDate(data.get("startDate", dict())),
+        asDate(data.get("endDate", dict())),
+        data.get("type", None),
+        data.get("format", None),
+        data.get("status", None),
+        data.get("description", None),
+        data.get("season", None),
+        data.get("seasonInt", None),
+        data.get("episodes", None),
+        data.get("duration", None),
+        data.get("countryOfOrigin", None),
+        data.get("isLicensed", None),
+        data.get("source", None),
+        data.get("hashtag", None),
+        data.get("updatedAt", None),
+        data.get("genres", None),
+        data.get("synonyms", None),
+        data.get("averageScore", None),
+        data.get("meanScore", None),
+        data.get("popularity", None),
+        data.get("isLocked", None),
+        data.get("trending", None),
+        data.get("favourites", None),
+        data.get("isFavourite", None),
+        data.get("isAdult", None),
+        data.get("streamingEpisodes", None),
+        data.get("siteUrl", None),
+        data.get("autoCreateForumThread", None),
+        data.get("isRecommendationBlocked", None),
+        data.get("airingSchedule", None))
 
-def asDate(dct):
+def asDate(dct: dict):
     '''
     Takes a dictionary and returns a date object using the values.
     If either key has a None value, return None.
     '''
-    if dct["year"] == None or dct["month"] == None or dct["day"] == None:
+    if dct.get("year", None) == None or dct.get("month", None) == None or dct.get("day", None) == None:
         return None
     return datetime.date(dct["year"], dct["month"], dct["day"])
 
-def asTitle(dct):
-    return MediaTitle(dct["romaji"], dct["english"], dct["native"], dct["userPreferred"])
+def asTitle(dct: dict):
+    return MediaTitle(dct.get("romaji", None), dct.get("english", None), dct.get("native", None), dct.get("userPreferred", None))
