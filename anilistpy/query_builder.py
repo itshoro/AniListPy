@@ -277,6 +277,7 @@ class CharacterQuery(SimpleQuery):
             allowedArgs = [
                 ("id", "Int"),
                 ("search", "String"),
+                ("id_not", "Int")
                 ("id_in", "[Int]"),
                 ("id_not_in", "[Int]"),
                 ("sort", NotImplemented)
