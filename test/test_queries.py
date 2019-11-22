@@ -12,9 +12,9 @@ from .helpers import GqlClient
 #       - Rework tests so they focus on our implementation, instead of relying on data (the data we will receive has to be taken as correct, so there is no reason to test it) ✔
 
 # TODO: Write unit tests for the following cases (and fix them in the code)
-#       - Test when creating a query and passing it multiple arguments of the same type, the arguments
-#           - ...should be condensed into one, so that we only focus on the first occourance of an argument
-#           - ...shouldn't be accepted, and the query should raise an exception
+#       - Test when creating a query and passing it multiple arguments of the same type, the arguments ✔
+#           - ~...should be condensed into one, so that we only focus on the latest occourance of an argument ~
+#           - ...shouldn't be accepted, and the query should raise an exception ✔
 
 # FIXME:Nested Queries (Page Queries) should take in more than one query
 #       Right now Page Queries can only have *one* nested query. To give the user the highest customizability,
@@ -55,6 +55,16 @@ def test_query_builder_can_build_simple_query_with_multiple_arguments():
     query, variables = qb.build(mq)
 
     assert query == "query($id:Int,$type:MediaType,$chapters_greater:Int){Media(id:$id,type:$type,chapters_greater:$chapters_greater){body}}" and len(variables) == 3 and variables == { "id": -1, "type": manga, "chapters_greater": 1 }
+
+# Maybe instead raise an exception or let the user decide. The default behavior is to just truncate the args.
+def test_query_builder_truncates_multiple_arguments_of_the_same_type_into_one():
+    qb = QueryBuilder()
+    mq = MediaQuery()
+    with pytest.raises(KeyError):
+        mq.setArguments([
+            ("id", 1),
+            ("id", 2)
+        ])
 
 def test_query_builder_can_build_nested_query():
     qb = QueryBuilder()
