@@ -295,7 +295,7 @@ class PageQuery(SimpleQuery):
         if arguments != None:
             self.setArguments(arguments)
         self.innerQuery = innerQuery
-        self.innerQuery.objectType = self.getNestedName(self.innerQuery.objectType)
+        self.innerQuery.objectType = getNestedName(self.innerQuery.objectType)
 
     def build(self):
         innerQuery, innerVars = self.innerQuery.build()
@@ -311,7 +311,7 @@ class PageQuery(SimpleQuery):
         fullArgumentList.extend(self.innerQuery.getArgs())
         return fullArgumentList
 
-    def getNestedName(self, name: str):
+def getNestedName(name: str):
         return {
             "Media": "media",
             "Character": "characters"
