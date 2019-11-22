@@ -1,5 +1,6 @@
 {
     "configurations": [
+
         {
             "name": "Python: Current File",
             "type": "python",
@@ -13,6 +14,21 @@
             "request": "launch",
             "program": "${workspaceRoot}\\main.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Debug PyTest",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "pythonPath": "${config:python.pythonPath}",
+            "module": "pytest",
+            "args": [
+                "-sv"
+            ],
+            "cwd": "${workspaceRoot}",
+            "env": {},
+            "envFile": "${workspaceRoot}/.env",
+            "redirectOutput": true
         }
     ]
 }
