@@ -15,4 +15,4 @@ class GqlClient:
         if response.status_code >= 400:
             raise TypeError(f"Request produced a {response.status_code} - {response.reason}\n" + response.text)
 
-        return response
+        return response.json()

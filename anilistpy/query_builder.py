@@ -31,8 +31,11 @@ class Query():
 
         for arg in potentialArgs:
             if (arg[0] in filterNames):
-                self.args.append((arg[0], filterTypes[filterNames.index(arg[0])], arg[1]))
-                continue
+                if (arg[0] not in [key[0] for key in self.args]):
+                    self.args.append((arg[0], filterTypes[filterNames.index(arg[0])], arg[1]))
+                    continue
+                else:
+                    raise KeyError(f"Invalid Mapping, argument \"{arg[0]}\" already set.")
             else:
                 raise Exception("Filter not supported.")
 
@@ -274,6 +277,7 @@ class CharacterQuery(SimpleQuery):
             allowedArgs = [
                 ("id", "Int"),
                 ("search", "String"),
+                ("id_not", "Int"),
                 ("id_in", "[Int]"),
                 ("id_not_in", "[Int]"),
                 ("sort", NotImplemented)
@@ -295,7 +299,7 @@ class PageQuery(SimpleQuery):
         if arguments != None:
             self.setArguments(arguments)
         self.innerQuery = innerQuery
-        self.innerQuery.objectType = self.getNestedName(self.innerQuery.objectType)
+        self.innerQuery.objectType = getNestedName(self.innerQuery.objectType)
 
     def build(self):
         innerQuery, innerVars = self.innerQuery.build()
@@ -311,7 +315,7 @@ class PageQuery(SimpleQuery):
         fullArgumentList.extend(self.innerQuery.getArgs())
         return fullArgumentList
 
-    def getNestedName(self, name: str):
+def getNestedName(name: str):
         return {
             "Media": "media",
             "Character": "characters"

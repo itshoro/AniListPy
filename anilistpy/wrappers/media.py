@@ -1,11 +1,3 @@
-# from title import MediaTitle
-# from airingSchedule import AiringSchedule
-# from status import MediaStatus
-# 
-# from episode import MediaStreamingEpisode
-# 
-# from date import FuzzyDate
-
 class Media():
     def __init__(self, id, title, startDate, endDate, type, format, status, description, season, seasonInt, episodes, duration, countryOfOrigin, isLicensed,
     source, hashtag, updatedAt, genres, synonyms, averageScore, meanScore, popularity, isLocked, trending, favourites, isFavourite, isAdult, streamingEpisodes,
