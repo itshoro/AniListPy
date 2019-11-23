@@ -1,11 +1,12 @@
 from anilistpy.gqlclient import GqlClient
 from anilistpy.query_builder import getNestedName
 import json
+import math
 
 class GqlClient(GqlClient):
     def __init__(self):
         self.data = {
-            "ANIME": {
+            "Media": {
                 2966: 
                 {
                     "Media": 
@@ -26,20 +27,50 @@ class GqlClient(GqlClient):
                         }
                     }
                 }
+            },
+            "Character": {
+                7373:
+                {
+                    "Character":
+                    {
+                        "name": {
+                            "first": "Holo"
+                        }
+                    }
+                }
             }
         }
 
     def request(self, query, variables):
+        amount = query.count('}')
+
+        if amount == 2:
+            positionOfType = query.index('{') + 1
+            nextPos = min(
+                query.index('{', positionOfType),
+                query.index('(', positionOfType)
+            )
+            requestType = query[positionOfType : nextPos]
+        else:
+            pagePos = query.index('{')
+            positionOfType = query.index('{', pagePos + 1) + 1
+            nextPos = min(
+                query.index('{', positionOfType),
+                query.index('(', positionOfType)
+            )
+            requestType = query[positionOfType : nextPos]
+
+
         if "id" in variables:
             return {
-                "data": self.data[variables["type"]][variables["id"]]
+                "data": self.data[requestType][variables["id"]]
             }
         elif "id_in" in variables:
             data = { "data" : { "Page": { getNestedName("Media"): [] } } }
             listData = []
             for id in variables["id_in"]:
-                if id in self.data[variables["type"]].keys():
-                    listData.append(self.data[variables["type"]][id]["Media"])
+                if id in self.data[requestType].keys():
+                    listData.append(self.data[requestType][id]["Media"])
             data["data"]["Page"]["media"] = listData
             return data
         raise Exception()
