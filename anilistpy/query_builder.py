@@ -71,23 +71,14 @@ class MediaQuery(SimpleQuery):
             objectType = "Media",
             body = '''
             id
-            endDate {
-                year
-                month
-                day
-            }
             airingSchedule {
                 edges {
-                    id
                     node {
                         id
                         airingAt
                         timeUntilAiring
                         episode
                         mediaId
-                        media {
-                            id
-                        }
                     }
                 }
             }
@@ -123,6 +114,8 @@ class MediaQuery(SimpleQuery):
             hashtag
             trailer {
                 id
+                site
+                thumbnail
             }
             updatedAt
             coverImage {
@@ -167,6 +160,10 @@ class MediaQuery(SimpleQuery):
             isAdult
             nextAiringEpisode {
                 id
+                airingAt
+                timeUntilAiring
+                episode
+                mediaId
             }
             trends {
                 edges {
@@ -180,6 +177,8 @@ class MediaQuery(SimpleQuery):
             }
             externalLinks {
                 id
+                url
+                site
             }
             streamingEpisodes {
                 title

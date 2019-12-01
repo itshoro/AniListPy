@@ -5,9 +5,8 @@ from .gqlclient import GqlClient
 from .constants import url, anime, manga
 
 from collections import namedtuple
-from .wrappers.media import Media
+from .wrappers.media import Media, MediaTitle, AiringSchedule, MediaTrailer, MediaImage, MediaTag, MediaExternalLink, MediaStreamingEpisode
 from .wrappers.character import Character, CharacterImage, CharacterName
-from .wrappers.title import MediaTitle
 
 from .query_builder import MediaQuery
 
@@ -80,8 +79,43 @@ def asCharacterImage(data):
         data.get("medium",None)
     )
 
+def asMediaTrailer(data):
+    return MediaTrailer(
+        data.get("id", None)
+        data.get("site", None)
+        data.get("thumbnail", None)
+    )
+
+def asMediaTag(data):
+    return MediaTag(
+        data.get("id", None),
+        data.get("name", None),
+        data.get("description", None),
+        data.get("category", None),
+        data.get("rank", None),
+        data.get("isGeneralSpoiler", None),
+        data.get("isMediaSpoiler", None),
+        data.get("isAdult", None)
+    )
+
+def asMediaExternalLink(data):
+    return MediaExternalLink(
+        data.get("id", None),
+        data.get("url", None),
+        data.get("site", None)
+    )
+
+def asMediaStreamingEpisode(data):
+    return MediaStreamingEpisode(
+        data.get("title", None),
+        data.get("thumbnail", None),
+        data.get("url", None),
+        data.get("site", None)
+    )
+
 def asMedia(data):
     return Media(
+        [asAiringSchedule(airingScheduleDate) for airingScheduleDate in data.get("airingSchedule", dict()).get("edges", dict())],
         data.get("id", None),
         asMediaTitle(data.get("title", dict())),
         asFuzzyDate(data.get("startDate", dict())),
@@ -94,11 +128,16 @@ def asMedia(data):
         data.get("seasonInt", None),
         data.get("episodes", None),
         data.get("duration", None),
+        data.get("chapters", None),
+        data.get("volumes", None),
         data.get("countryOfOrigin", None),
         data.get("isLicensed", None),
         data.get("source", None),
         data.get("hashtag", None),
+        asMediaTrailer(data.get("trailer", dict())),
         data.get("updatedAt", None),
+        asMediaImage(data.get("coverImage", dict())),
+        data.get("bannerImage", None),
         data.get("genres", None),
         data.get("synonyms", None),
         data.get("averageScore", None),
@@ -107,13 +146,35 @@ def asMedia(data):
         data.get("isLocked", None),
         data.get("trending", None),
         data.get("favourites", None),
+        [asMediaTag(tag) for tag in data.get("tags", dict())],
+        [relationId for relationId data.get("relations", dict()).get("edges", dict())],
+        [charId for charId data.get("characters", dict()).get("edges", dict())],
+        [staffId for staffId data.get("staff", dict()).get("edges", dict())],
+        [studioId for studioId data.get("studios", dict()).get("edges", dict())],
         data.get("isFavourite", None),
         data.get("isAdult", None),
-        data.get("streamingEpisodes", None),
+        asAiringSchedule(data.get("nextAiringEpisode", dict())),
+        data.get("trends", None), # TODO: Parse MediaTrends
+        [asMediaExternalLink(link) for link in data.get("externalLinks", dict())],
+        [asMediaStreamingEpisode(episode) for episode in data.get("streamingEpisodes", dict())],
+        data.get("rankings", None), # TODO: Parse MediaRankings
+        data.get("mediaListEntry", None), # TODO: Parse this, **if** the user is authenticated, TODO: Make it able so users are able to authenticate
+        data.get("reviews", None), # TODO: Parse Reviews. Maybe just keep these as ids and query them seperately
+        data.get("recommendations", None), # TODO: Parse Recommendations
         data.get("siteUrl", None),
         data.get("autoCreateForumThread", None),
-        data.get("isRecommendationBlocked", None),
-        data.get("airingSchedule", None))
+        data.get("isRecommendationBlocked", None))
+
+def asMediaImage(data):
+    return MediaImage(
+        data.get("extraLarge", None),
+        data.get("large", None),
+        data.get("medium", None),
+        data.get("color", None)
+    )
+
+def asAiringSchedule(dct: dict):
+    return AiringSchedule(dct.get("id", None), dct.get("airingAt", None), dct.get("tileUntilAiring", None), dct.get("episode", None), dct.get("mediaId", None))
 
 def asFuzzyDate(dct: dict):
     '''
