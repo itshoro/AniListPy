@@ -4,6 +4,8 @@ from anilistpy.anilist import Client, asMedia, asCharacter
 from anilistpy.constants import manga, anime
 from anilistpy.query_builder import QueryBuilder, PageQuery, MediaQuery, CharacterQuery
 
+from anilistpy.wrappers.media import MediaSort
+
 from .helpers import GqlClient
 
 client = Client(GqlClient())

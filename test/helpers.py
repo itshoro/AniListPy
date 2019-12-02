@@ -38,6 +38,20 @@ class GqlClient(GqlClient):
                         }
                     }
                 }
+            },
+            "Staff": {
+                95070:
+                {
+                    "Staff": {
+                        "id": 95070,
+                        "name": {
+                            "first": "Ami"
+                            "last": "Koshimizu"
+                            "full": "Ami Koshimizu"
+                            "native": "小清水亜美"
+                        }
+                    }
+                }
             }
         }
 

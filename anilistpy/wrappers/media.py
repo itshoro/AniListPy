@@ -1,3 +1,9 @@
+class MediaSort:
+    id = "ID"
+    id_desc = "ID_DESC"
+    title_romaji = "TITLE_ROMAJI"
+    title_romaji_desc = "TITLE_ROMAJI_DESC"
+
 class Media():
     def __init__(self, id, title, startDate, endDate, type, format, status, description, season, seasonInt, episodes, duration, countryOfOrigin, isLicensed,
     source, hashtag, updatedAt, genres, synonyms, averageScore, meanScore, popularity, isLocked, trending, favourites, isFavourite, isAdult, streamingEpisodes,

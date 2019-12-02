@@ -11,7 +11,7 @@ class CharacterImage:
         self.medium = medium
 
 class Character():
-    def __init__(self, id, name: CharacterName, image: CharacterImage, description, isFavourite, siteUrl, media, updatedAt, favourites):
+    def __init__(self, id, name: CharacterName, image: CharacterImage, description, isFavourite, siteUrl, media, favourites):
         self.id = id
         self.name = name
         self.image = image
@@ -19,5 +19,4 @@ class Character():
         self.isFavourite = isFavourite
         self.siteUrl = siteUrl
         self.media = media
-        self.updatedAt = updatedAt
         self.favourites = favourites
