@@ -79,10 +79,10 @@ def asCharacterImage(data):
         data.get("medium",None)
     )
 
-def asMediaTrailer(data):
+def asMediaTrailer(data: dict):
     return MediaTrailer(
-        data.get("id", None)
-        data.get("site", None)
+        data.get("id", None),
+        data.get("site", None),
         data.get("thumbnail", None)
     )
 
@@ -147,10 +147,10 @@ def asMedia(data):
         data.get("trending", None),
         data.get("favourites", None),
         [asMediaTag(tag) for tag in data.get("tags", dict())],
-        [relationId for relationId data.get("relations", dict()).get("edges", dict())],
-        [charId for charId data.get("characters", dict()).get("edges", dict())],
-        [staffId for staffId data.get("staff", dict()).get("edges", dict())],
-        [studioId for studioId data.get("studios", dict()).get("edges", dict())],
+        [relationId for relationId in data.get("relations", dict()).get("edges", dict())],
+        [charId for charId in data.get("characters", dict()).get("edges", dict())],
+        [staffId for staffId in data.get("staff", dict()).get("edges", dict())],
+        [studioId for studioId in data.get("studios", dict()).get("edges", dict())],
         data.get("isFavourite", None),
         data.get("isAdult", None),
         asAiringSchedule(data.get("nextAiringEpisode", dict())),

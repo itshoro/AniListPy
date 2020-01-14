@@ -1,10 +1,10 @@
 import pytest
 
-from anilistpy.anilist import Client, asMedia, asCharacter
-from anilistpy.constants import manga, anime
-from anilistpy.query_builder import QueryBuilder, PageQuery, MediaQuery, CharacterQuery
+from anipy.anilist import Client, asMedia, asCharacter
+from anipy.constants import manga, anime
+from anipy.query_builder import QueryBuilder, PageQuery, MediaQuery, CharacterQuery
 
-from anilistpy.wrappers.media import MediaSort
+from anipy.wrappers.media import MediaSort
 
 from .helpers import GqlClient
 
@@ -84,7 +84,7 @@ def test_client_can_build_media_object():
     media_query.body = "body"
     query, variables = query_builder.build(media_query)
     media = asMedia(client.request(query, variables)["Media"])
-    assert media.title.english() == "Spice and Wolf"
+    assert media.title.english == "Spice and Wolf"
 
 # Character Query Tests
 def test_query_builder_can_build_character_query():

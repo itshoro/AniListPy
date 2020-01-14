@@ -1,13 +1,11 @@
+import os
+
 class MediaSort:
     id = "ID"
     id_desc = "ID_DESC"
     title_romaji = "TITLE_ROMAJI"
     title_romaji_desc = "TITLE_ROMAJI_DESC"
 
-class Media():
-    def __init__(self, id, title, startDate, endDate, type, format, status, description, season, seasonInt, episodes, duration, countryOfOrigin, isLicensed,
-    source, hashtag, updatedAt, genres, synonyms, averageScore, meanScore, popularity, isLocked, trending, favourites, isFavourite, isAdult, streamingEpisodes,
-    siteUrl, autoCreateForumThread, isRecommendationBlocked, airingSchedule):
 class MediaStreamingEpisode:
     def __init__(self, title, thumbnail, url, site):
         self.title = title
@@ -53,7 +51,6 @@ class MediaImage:
         self.medium = medium
         self.color = color
 
-import os
 class MediaTitle():
     def __init__(self, romaji, english, native, userPreferred):
         self.romaji = romaji
@@ -67,7 +64,7 @@ class MediaTitle():
 class Media:
     def __init__(self, airingSchedule, id, title, startDate, endDate, type, format, status, description, season, seasonInt, episodes, duration, chapters, volumes, countryOfOrigin, isLicensed,
     source, hashtag, trailer, updatedAt, coverImage, bannerImage, genres, synonyms, averageScore, meanScore, popularity, isLocked, trending, favourites, tags, relations, characterIds, staffIds, studios, isFavourite, isAdult, nextAiringEpisode, trends, externalLinks, streamingEpisodes,
-    rankings, mediaListEntry, reviews, recommdations, siteUrl, autoCreateForumThread, isRecommendationBlocked):
+    rankings, mediaListEntry, reviews, recommendations, siteUrl, autoCreateForumThread, isRecommendationBlocked):
         self.airingSchedule = airingSchedule
         self.id = id
         self.title = title
@@ -106,7 +103,7 @@ class Media:
         self.studios = studios
         self.isFavourite = isFavourite
         self.isAdult = isAdult
-        self.nextAiringEpisode = nextAiringEpisodes
+        self.nextAiringEpisode = nextAiringEpisode
         self.trends = trends
         self.externalLinks = externalLinks
         self.streamingEpisodes = streamingEpisodes
