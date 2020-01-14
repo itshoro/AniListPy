@@ -1,3 +1,6 @@
+# TODO: Implement sort in queries
+# TODO: Find a consistent way on how to deal with edges in responses (list of ids and specifying the type in a doc string).
+
 class QueryBuilder:
     def __init__(self):
         pass
@@ -71,23 +74,14 @@ class MediaQuery(SimpleQuery):
             objectType = "Media",
             body = '''
             id
-            endDate {
-                year
-                month
-                day
-            }
             airingSchedule {
                 edges {
-                    id
                     node {
                         id
                         airingAt
                         timeUntilAiring
                         episode
                         mediaId
-                        media {
-                            id
-                        }
                     }
                 }
             }
@@ -123,6 +117,8 @@ class MediaQuery(SimpleQuery):
             hashtag
             trailer {
                 id
+                site
+                thumbnail
             }
             updatedAt
             coverImage {
@@ -167,6 +163,10 @@ class MediaQuery(SimpleQuery):
             isAdult
             nextAiringEpisode {
                 id
+                airingAt
+                timeUntilAiring
+                episode
+                mediaId
             }
             trends {
                 edges {
@@ -180,6 +180,8 @@ class MediaQuery(SimpleQuery):
             }
             externalLinks {
                 id
+                url
+                site
             }
             streamingEpisodes {
                 title
@@ -229,20 +231,27 @@ class MediaQuery(SimpleQuery):
                 ("volumes_greater", "Int"),
                 ("volumes_lesser", "Int"),
                 ("type", "MediaType"),
-                ("genre_in", NotImplemented),
-                ("genre_not_in", NotImplemented),
-                ("tag_in", NotImplemented),
-                ("tag_not_in", NotImplemented),
-                ("tagCategory_in", NotImplemented),
-                ("tagCategory_not_in", NotImplemented),
-                ("licensedBy_in", NotImplemented),
-                ("averageScore_not", NotImplemented),
-                ("averageScore_greater", NotImplemented),
-                ("averageScore_lesser", NotImplemented),
-                ("popularity_not", NotImplemented),
-                ("popularity_greater", NotImplemented),
-                ("popularity_lesser", NotImplemented),
-                ("source_in", NotImplemented),
+                ("genre", "String"),
+                ("genre_in", "[String]"),
+                ("genre_not_in", "[String]"),
+                ("tag", "String"),
+                ("tag_in", "[String]"),
+                ("tag_not_in", "[String]"),
+                ("tagCategory", "String"),
+                ("tagCategory_in", "[String]"),
+                ("tagCategory_not_in", "[String]"),
+                ("licensedBy_in", "String"),
+                ("averageScroe", "Int"),
+                ("averageScore_not", "Int"),
+                ("averageScore_greater", "Int"),
+                ("averageScore_lesser", "Int"),
+                ("popularity", "Int"),
+                ("popularity_not", "Int"),
+                ("popularity_greater", "Int"),
+                ("popularity_lesser", "Int"),
+                ("source", "MediaSource"),
+                ("source_in", "[MediaSource]"),
+                ("sort", "[MediaSort]")
             ],
             queryArgs= arguments)
 
@@ -271,7 +280,6 @@ class CharacterQuery(SimpleQuery):
                     id
                 }
             }
-            updatedAt
             favourites
             ''',
             allowedArgs = [
@@ -280,9 +288,59 @@ class CharacterQuery(SimpleQuery):
                 ("id_not", "Int"),
                 ("id_in", "[Int]"),
                 ("id_not_in", "[Int]"),
-                ("sort", NotImplemented)
+                ("sort", "CharacterSort")
             ],
             queryArgs=arguments
+        )
+
+class StaffQuery(SimpleQuery):
+    def __init__(self, arguments: list):
+        super().__init__(
+            objectType = "Staff",
+            body = '''
+                id
+                name {
+                    first
+                    last
+                    full
+                    native
+                }
+                language
+                image {
+                    large
+                    medium
+                }
+                description
+                isFavourite
+                siteUrl
+                staffMedia {
+                    edges {
+                        id
+                    }
+                }
+                characters {
+                    edges {
+                        id
+                    }
+                }
+                staff {
+                    id
+                }
+                submitter {
+                    id
+                }
+                submissionStatus
+                submissionNotes
+                favourites
+            ''',
+            allowedArgs = [
+                ("id", "Int"),
+                ("id_in", "[Int]"),
+                ("search", "String"),
+                ("id_not", "Int"),
+                ("id_not_in", "[Int]"),
+                ("sort", NotImplemented)
+            ]
         )
 
 class PageQuery(SimpleQuery):
@@ -315,8 +373,10 @@ class PageQuery(SimpleQuery):
         fullArgumentList.extend(self.innerQuery.getArgs())
         return fullArgumentList
 
+# TODO Move this to constants, rename constants to something along the line of "lib_helpers"
 def getNestedName(name: str):
-        return {
-            "Media": "media",
-            "Character": "characters"
-        }[name]
+    return {
+        "Media": "media",
+        "Character": "characters",
+        "Staff": "staff"
+    }[name]

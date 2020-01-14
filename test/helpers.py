@@ -1,5 +1,5 @@
-from anilistpy.gqlclient import GqlClient
-from anilistpy.query_builder import getNestedName
+from anipy.gqlclient import GqlClient
+from anipy.query_builder import getNestedName
 import json
 import math
 
@@ -35,6 +35,20 @@ class GqlClient(GqlClient):
                     {
                         "name": {
                             "first": "Holo"
+                        }
+                    }
+                }
+            },
+            "Staff": {
+                95070:
+                {
+                    "Staff": {
+                        "id": 95070,
+                        "name": {
+                            "first": "Ami",
+                            "last": "Koshimizu",
+                            "full": "Ami Koshimizu",
+                            "native": "小清水亜美"
                         }
                     }
                 }
